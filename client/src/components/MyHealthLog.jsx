@@ -2,40 +2,38 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Grid } from '@material-ui/core';
-import WeeklyTracker from './WeeklyTracker';
-import WeeklyTrackerDay from './WeeklyTrackerDay';
+import { Grid, makeStyles } from '@material-ui/core';
 import AppCalendar from './Calendar';
+import LogHealthSlider from './LogHealthSlider';
+import buttonsCss from '../css/buttons';
 
-const dates = [
-  {
-    date: 11,
-    day: 'Monday',
-    status: '10',
-    temp: 99.6,
-    symptoms: 'headache',
-    comments: 'Tired for the entire day',
+const useStyles = makeStyles({
+  root: {
+    '&:hover': {
+      textDecoration: 'none',
+    },
   },
-];
+  button: {
+    ...buttonsCss.buttons,
+    width: '320px',
+    margin: '10px',
+  },
+});
 
 function HealthLogButton() {
   const { t } = useTranslation();
-
+  const classes = useStyles();
   return (
     <div>
-      <Link to="/symptomsurvey">
-        <Button color="secondary" variant="contained">
+      <Link className={classes.root} to="/symptomsurvey">
+        <Button className={classes.button} variant="contained">
           {t('surveyButtonText')}
         </Button>
       </Link>
       <Grid container direction="column" alignContent="center">
         <AppCalendar />
-        {dates.map(dayData => (
-          <WeeklyTracker key={dayData.date}>
-            <WeeklyTrackerDay dayData={dayData} />
-          </WeeklyTracker>
-        ))}
       </Grid>
+      <LogHealthSlider />
     </div>
   );
 }

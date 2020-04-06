@@ -3,48 +3,101 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes, { object } from 'prop-types';
-import CalendarThreeLines from '../img/Calendar_Three-Lines.svg';
+
+const noDataText = 'N/A';
 
 const useStyles = makeStyles(() => ({
-  root: {
-    flexGrow: 1,
-  },
   div: {
-    width: '375px',
+    maxWidth: '560px',
+    width: '100%',
   },
-  summary: {
-    marginTop: '1vh',
-    marginRight: '2vw',
+  bold: {
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
-  topMargin: {
-    marginTop: '1vh',
+  rotated: {
+    fontSize: '14px',
+    left: '-15px',
+    position: 'absolute',
+    top: '35px',
+    transform: 'rotate(-90deg)',
+  },
+  date: {
+    fontSize: '32px',
+  },
+  feeling: {
+    fontSize: '24px',
+  },
+  textAlignLeft: {
+    textAlign: 'left',
+  },
+  ellipsis: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
 }));
 
 const WeeklyTrackerDay = props => {
-  const classes = useStyles();
   const { dayData } = props;
+  const classes = useStyles();
+  const date = new Date(dayData.date);
+
   return (
     <div className={classes.div}>
-      <Grid container spacing={0} className="day-container">
-        <Grid item className={classes.topMargin}>
-          <img alt="threeLinesSvg" src={CalendarThreeLines} />
-        </Grid>
-        <Grid item className={classes.topMargin}>
-          <Typography variant="h4">{dayData.date}</Typography>
-        </Grid>
-        <Grid item className={classes.summary}>
-          <Typography variant="subtitle2">You felt: {dayData.status}/10</Typography>
-          <Typography variant="subtitle2">{dayData.day} </Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="subtitle2">
-            Fever: <strong>{dayData.temp}</strong>
+      <Grid container spacing={1} alignItems="center">
+        <Grid item xs={1}>
+          <Typography variant="body1" className={[classes.bold, classes.rotated]}>
+            Selected
           </Typography>
-          <Typography variant="subtitle2">
-            Symptoms: <strong>{dayData.symptoms}</strong>
-          </Typography>
-          <Typography variant="subtitle2">Comments: ugh</Typography>
+        </Grid>
+        <Grid item xs={2} container>
+          <Grid item xs={12}>
+            <Typography variant="body1" className={classes.bold}>
+              {date.toString().split(' ')[0]}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1" className={classes.date}>
+              {date.getDate()}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid item xs={3} sm={4} container>
+          <Grid item xs={12}>
+            <Typography variant="body2">You said you felt:</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1" className={[classes.bold, classes.feeling]}>
+              {dayData.physical.dailyfeeling}/10
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid item xs={6} sm={5} container className={classes.textAlignLeft}>
+          <Grid item xs={12}>
+            <Typography variant="body2">
+              Temperature:&nbsp;
+              <strong>
+                {dayData.physical.feverSeverity
+                  ? `${dayData.physical.feverSeverity} ${String.fromCharCode(176)}F`
+                  : noDataText}
+              </strong>
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body2">
+              Symptoms:&nbsp;
+              <strong>
+                {dayData.physical.dailySymptomsFeeling ? `${dayData.physical.dailySymptomsFeeling}/10` : noDataText}
+              </strong>
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body2" className={classes.ellipsis}>
+              Comments:&nbsp;
+              <strong>{dayData.nonPhysical.openComment || noDataText}</strong>
+            </Typography>
+          </Grid>
         </Grid>
       </Grid>
     </div>
@@ -53,19 +106,6 @@ const WeeklyTrackerDay = props => {
 
 WeeklyTrackerDay.propTypes = {
   dayData: PropTypes.objectOf(object).isRequired,
-  date: PropTypes.number,
-  day: PropTypes.string,
-  status: PropTypes.string,
-  temp: PropTypes.number,
-  symptoms: PropTypes.string,
-};
-
-WeeklyTrackerDay.defaultProps = {
-  date: 0,
-  day: '0/0/0000',
-  status: 'n/a',
-  temp: 0,
-  symptoms: 'n/a',
 };
 
 export default WeeklyTrackerDay;
